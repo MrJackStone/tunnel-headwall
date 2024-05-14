@@ -1,0 +1,233 @@
+!!
+FloorRES='Alas-A%GalleryIndex%-PISO-V%Version%'
+StiffRES='Alas-A%GalleryIndex%-ENRIJ-V%Version%'
+WallRES='Alas-A%GalleryIndex%-PAR-V%Version%'
+FootRES='Alas-A%GalleryIndex%-SAP-V%Version%'
+SoilRES='Alas-A%GalleryIndex%-SOLO-V%Version%'
+GeneralRES='Alas-A%GalleryIndex%-GERAL-V%Version%'
+
+MemorialDATA='Alas-A%GalleryIndex%-MEMORIAL-V%Version%'
+SingleRES='Alas-A%GalleryIndex%-V%Version%'
+
+!!
+*cfopen,GeneralRES,'TXT',
+   *vwrite,
+   ('GERAL:')
+   *vwrite,Version
+   (';  Version = ',F3.0,TL1,' ')
+   *vwrite,GalleryIndex
+   (';  GalleryIndex = ',F3.0,TL1,' ')
+   *vwrite,
+   ('GOMETRIA:')
+   *vwrite,GalleryModules
+   (';  GalleryModules = ',F3.0,TL1,' ')
+   *vwrite,GalleryLength
+   (';  GalleryLength = ',F10.4)
+   *vwrite,GalleryHeight
+   (';  GalleryHeight = ',F10.4)
+   *vwrite,GalleryWidth
+   (';  GalleryWidth = ',F10.4)
+   *vwrite,GalleryDepth
+   (';  GalleryDepth = ',F10.4)
+   *vwrite,
+   ('CONCRETO:')
+   *vwrite,fck
+   (';  fck = ',E12.4)
+   *vwrite,Poisson
+   (';  Poisson = ',F10.4)
+   *vwrite,MassDensity
+   (';  MassDensity = ',E12.4)
+   *vwrite,
+   ('SOLO:')
+   *vwrite,FrictionAngle
+   (';  FrictionAngle = ',F10.4)
+   *vwrite,SoilCohesion
+   (';  SoilCohesion = ',E12.4)
+   *vwrite,SoilDensity
+   (';  SoilDensity = ',F10.4)
+   *vwrite,SoilStiffness
+   (';  SoilStiffness = ',E12.4)
+   *vwrite,SpringLength
+   (';  SpringLength = ',F10.4)
+   *vwrite,SpringElasticModulus
+   (';  SpringElasticModulus = ',E12.4)
+   *vwrite,
+   ('ÁGUA:')
+   *vwrite,WaterDensity
+   (';  WaterDensity = ',F10.4)
+   *vwrite,SaturationIncrement
+   (';  SaturationIncrement = ',F10.4)
+   *vwrite,
+   ('CARREGAMENTO:')
+   *vwrite,Gravity
+   (';  Gravity = ',F10.4)
+   *vwrite,LoadCount
+   (';  LoadCount = ',F3.0,TL1,' ')
+   *vwrite,
+   (';  TREM TIPO 1')
+   *vwrite,
+   (';  PositionVector | LoadVector')
+   *vwrite,PositionVector(1,1),LoadVector(1,1)
+   (';  ',F14.4,' | ',E12.4)
+   *vwrite,xOffset
+   (';  xOffset = ',F10.4)
+   *vwrite,zOffset
+   (';  zOffset = ',F10.4)
+   *vwrite,LineDirection
+   (';  LineDirection = ',F10.4)
+   *vwrite,
+   ('ANSYS:')
+   *vwrite,CoordSys
+   (';  CoordSys = ',F3.0,TL1,' ')
+   *vwrite,WElementSize
+   (';  WElementSize = ',F10.4)
+   *vwrite,SubstepCount
+   (';  SubstepCount = ',F3.0,TL1,' ')
+*cfclos
+
+!!
+*cfopen,FloorRES,'TXT',
+  *vwrite,
+  ('    PROF;   X1 OFF;    ESCON;      ESP;       MX MAX;       MX MIN;       MY MAX;       MY MIN;       FX MAX;       FX MIN;       FY MAX;       FY MIN;       QX MAX;       QX MIN;       QY MAX;       QY MIN')
+*cfclos
+
+*cfopen,StiffRES,'TXT',
+  *vwrite,
+  ('    PROF;   X1 OFF;    ESCON;      ESP;       MX MAX;       MX MIN;       MY MAX;       MY MIN;       FX MAX;       FX MIN;       FY MAX;       FY MIN;       QX MAX;       QX MIN;       QY MAX;       QY MIN')
+*cfclos
+
+*cfopen,WallRES,'TXT',
+  *vwrite,
+  ('    PROF;   X1 OFF;    ESCON;      ESP;       MX MAX;       MX MIN;       MY MAX;       MY MIN;       FX MAX;       FX MIN;       FY MAX;       FY MIN;       QX MAX;       QX MIN;       QY MAX;       QY MIN')
+*cfclos
+
+*cfopen,FootRES,'TXT',
+  *vwrite,
+  ('    PROF;   X1 OFF;    ESCON;      ESP;       MX MAX;       MX MIN;       MY MAX;       MY MIN;       FX MAX;       FX MIN;       FY MAX;       FY MIN;       QX MAX;       QX MIN;       QY MAX;       QY MIN')
+*cfclos
+
+*cfopen,SoilRES,'TXT',
+  *vwrite,
+  ('PROF; X1 OFF; ESCON; S MAX; S MED; UY MAX; UY MIN')
+*cfclos
+
+
+!!
+*cfopen,MemorialDATA,'DAT',
+   *vwrite,
+   ('GERAL:')
+   *vwrite,Version
+   (';  Version = ',F3.0,TL1)
+   *vwrite,GalleryIndex
+   (';  GalleryIndex = ',F5.0,TL1)
+   *vwrite,
+   ('GOMETRIA:')
+   *vwrite,GalleryModules
+   (';  GalleryModules = ',F3.0,TL1)
+   *vwrite,GalleryHeight
+   (';  GalleryHeight = ',F10.4)
+   *vwrite,GalleryWidth
+   (';  GalleryWidth = ',F10.4)
+   *vwrite,GalleryDepth
+   (';  GalleryDepth = ',F10.4)
+   *vwrite,InletAngle
+   (';  InletAngle = ',F10.4)
+   *vwrite,InletLength
+   (';  InletLength = ',F10.4)
+   *vwrite,InletWidth
+   (';  InletWidth = ',F10.4)
+   *vwrite,ExceedingHeight
+   (';  ExceedingHeight = ',F10.4)
+   *vwrite,WallHeight
+   (';  WallHeight = ',F10.4)
+   *vwrite,FootingWidth
+   (';  FootingWidth = ',F10.4)
+   *vwrite,InternalWidth
+   (';  InternalWidth = ',F10.4)
+   *vwrite,
+   ('CONCRETO:')
+   *vwrite,fck
+   (';  fck = ',E12.4)
+   *vwrite,Poisson
+   (';  Poisson = ',F10.4)
+   *vwrite,MassDensity
+   (';  MassDensity = ',E12.4)
+   *vwrite,ElasticModulus
+   (';  ElasticModulus = ',E12.4)
+   *vwrite,
+   ('SEÇÕES:')
+   *vwrite,RetainingWallThk
+   (';  RetainingWallThk = ',F10.4)
+   *vwrite,SlabThk
+   (';  SlabThk = ',F10.4)
+   *vwrite,StiffenerThk
+   (';  StiffenerThk = ',F10.4)
+   *vwrite,FootingHeight
+   (';  FootingHeight = ',F10.4)
+   *vwrite,BeamWidth
+   (';  BeamWidth = ',F10.4)
+   *vwrite,BeamHeight
+   (';  BeamHeight = ',F10.4)
+   *vwrite,
+   ('SOLO:')
+   *vwrite,FrictionAngle
+   (';  FrictionAngle = ',F10.4)
+   *vwrite,SoilCohesion
+   (';  SoilCohesion = ',E12.4)
+   *vwrite,SoilDensity
+   (';  SoilDensity = ',F10.4)
+   *vwrite,SoilStiffness
+   (';  SoilStiffness = ',E12.4)
+   *vwrite,SpringElasticModulus
+   (';  SpringElasticModulus = ',E12.4)
+   *vwrite,SpringLength
+   (';  SpringLength = ',F10.4)
+   *vwrite,WSpringConstant
+   (';  WSpringConstant = ',E12.4)
+   *vwrite,WSpringArea
+   (';  WSpringArea = ',E12.4)
+   *vwrite,ActiveEPCoefficient
+   (';  ActiveEPCoefficient = ',F10.4)
+   *vwrite,Gammat
+   (';  Gammat = ',F10.4)
+   *vwrite,GammaSAT
+   (';  GammaSAT = ',F10.4)
+   *vwrite,GammaSUB
+   (';  GammaSUB = ',F10.4)
+   *vwrite,
+   ('ÁGUA:')
+   *vwrite,WaterDensity
+   (';  WaterDensity = ',F10.4)
+   *vwrite,SaturationIncrement
+   (';  SaturationIncrement = ',F10.4)
+   *vwrite,WaterDepth
+   (';  WaterDepth = ',F10.4)
+   *vwrite,WaterY
+   (';  WaterY = ',F10.4)
+   *vwrite,Gammaw
+   (';  Gammaw = ',F10.4)
+   *vwrite,
+   ('CARREGAMENTO:')
+   *vwrite,Gravity
+   (';  Gravity = ',F10.4)
+   *vwrite,LineDirection
+   (';  LineDirection = ',F10.4)
+   *vwrite,LineAngle
+   (';  LineAngle = ',F10.4)
+   *vwrite,xOffset
+   (';  xOffset = ',F10.4)
+   *vwrite,zOffset
+   (';  zOffset = ',F10.4)
+   *vwrite,
+   ('ANSYS:')
+   *vwrite,WElementSize
+   (';  WElementSize = ',F10.4)
+   *vwrite,WElementArea
+   (';  WElementArea = ',E12.4)
+   *vwrite,SubstepCount
+   (';  SubstepCount = ',F5.0,TL1)
+   *vwrite,pi
+   (';  pi = ',F10.4)
+*cfclos
+
+

@@ -1,0 +1,26 @@
+! Finite element model
+*msg,UI,GalleryIndex,'CREATING FINITE ELEMENT MODEL...'
+GALLERY # %4I %/&
+%35C
+
+CMSEL,S,RetainingWallAreas
+AATT,1,,1,CoordSys,1
+
+CMSEL,S,FootingAreas
+AATT,1,,1,CoordSys,4
+
+CMSEL,S,SlabArea
+AATT,1,,1,CoordSys,2
+
+CMSEL,S,StiffenerAreas
+AATT,1,,1,CoordSys,3
+
+CMSEL,S,TopBeamArea
+CMSEL,A,BotBeamArea
+CMSEL,A,BackBeamArea
+AATT,1,,1,CoordSys,5
+
+ALLSEL
+AESIZE,ALL,WElementSize
+AMESH,ALL
+

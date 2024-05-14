@@ -1,0 +1,109 @@
+!!
+!! DADOS DE ENTRADA
+!!
+! Índice da galeria (identificador)
+GalleryIndex=1
+
+! Número de módulos da galeria
+GalleryModules=4
+! Largura de cada módulo da galeria
+GalleryWidth=3
+! Altura da galeria
+GalleryHeight=3
+! Profundidade da galeria
+GalleryDepth=1
+
+! Altura da viga de testa
+ExceedingHeight=0.5
+! Ângulo das paredes da ala
+InletAngle=30
+
+! Largura enrijecida da laje de piso da ala
+InternalWidth=1
+! Profundidade da sapata corrida
+FootingDepth=0.8
+
+! Comprimento da ala
+InletLength=5.45
+! Espessura das paredes da ala
+RetainingWallThk=0.15
+! Largura das sapatas corridas
+FootingWidth=0.5
+! Espessura das sapatas corridas
+FootingHeight=0.15
+! Espessura dos enrijecimentos da laje de piso
+StiffenerThk=0.15
+
+! Ângulo do talude acima da ala
+BackfillAngle=30
+
+!!
+!! FINITE ELEMENT MODEL
+!!
+! Espessura da laje de piso
+SlabThk=0.15
+
+! Largura da viga de pé
+BeamWidth=0.2
+! Altura da viga de pé
+BeamHeight=0.8
+
+! Dimensão do elemento
+WElementSize=0.1
+
+! fck do concreto
+fck=30e6
+! Coeficiente de Poisson do concreto
+Poisson=0.2
+! Densidade do concreto
+MassDensity=2500
+
+! Rigidez do solo
+SoilStiffness=10e6
+
+! Aceleração da gravidade
+Gravity=9.81
+
+! Distância da linha ferroviária até a borda do topo do talude
+EdgeOffset=-1
+! Posição do trem-tipo
+xOffset=0
+! Esconsidade da linha ferroviária
+LineDirection=0
+
+! Ângulo de atrito do solo
+FrictionAngle=15
+! Coesão do solo
+SoilCohesion=0
+! Densidade do solo
+SoilDensity=1800
+
+! Densidade da água
+WaterDensity=1000
+! Incremento de densidade do solo saturado
+SaturationIncrement=100
+! Profundidade do nível d'água
+WaterDepth=14
+
+! Número de cargas no trem-tipo
+LoadCount=3
+
+! Valores das cargas do trem-tipo
+*del,LoadVector
+*dim,LoadVector,ARRAY,LoadCount
+LoadVector(1)=-150E3, -150E3, -150E3
+
+! Posições das cargas do trem-tipo
+*del,PositionVector
+*dim,PositionVector,ARRAY,LoadCount
+PositionVector(1)=0,1.5,3.0
+
+! Número de substeps da análise não-linear
+SubstepCount=50
+
+
+! Rodar o modelo
+ABC_V1_MODEL
+
+
+

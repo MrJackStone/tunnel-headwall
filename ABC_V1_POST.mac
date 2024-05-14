@@ -1,0 +1,590 @@
+IgnoredLowerBound=0
+IgnoredUpperBound=1
+
+/post1
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+WRITING RESULTS...
+
+SET,LAST
+
+! Criar tabelas
+ETABLE,FX,SMISC,1
+ETABLE,FY,SMISC,2
+ETABLE,MX,SMISC,4
+ETABLE,MY,SMISC,5
+ETABLE,MT,SMISC,6
+ETABLE,QX,SMISC,7
+ETABLE,QY,SMISC,8
+ETABLE,VFX,SMISC,1
+ETABLE,VMY,SMISC,2
+ETABLE,VMZ,SMISC,3
+ETABLE,VQZ,SMISC,5
+ETABLE,VQY,SMISC,6
+ETABLE,DESLOCY,U,Y
+ETABLE,DESLOCX,U,X
+
+ESEL,S,MAT,,1
+/view,,1,1,1
+/auto,1
+/eshape,1
+
+KEY='MX'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+MXIndex=EtableIndex
+
+KEY='MY'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+MYIndex=EtableIndex
+
+KEY='FX'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+FXIndex=EtableIndex
+
+KEY='FY'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+FYIndex=EtableIndex
+
+KEY='QX'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+QXIndex=EtableIndex
+
+KEY='QY'
+FLAG=1
+*get,ETCount,ETAB,0,NCOL,MAX
+EtableIndex=1
+*dowhile,FLAG
+   *get,ETName,ETAB,EtableIndex,LAB
+   *if,ETName,EQ,KEY,OR,EtableIndex,GE,ETCount,THEN
+      FLAG=0
+   *else
+      EtableIndex=EtableIndex+1
+   *endif
+*enddo
+QYIndex=EtableIndex
+
+!! Laje de piso
+!ASEL,R,LOC,Y,0
+CMSEL,S,SlabArea
+ESLA,S
+NSLE,S
+!NSEL,R,LOC,Z,IgnoredLowerBound*InletLength,IgnoredUpperBound*InletLength
+ESLN,R,1
+
+*get,ECount,ELEM,0,COUNT
+
+*del,MXValues
+*del,MYValues
+*del,FXValues
+*del,FYValues
+*del,QXValues
+*del,QYValues
+*dim,MXValues,ARRAY,ECount
+*dim,MYValues,ARRAY,ECount
+*dim,FXValues,ARRAY,ECount
+*dim,FYValues,ARRAY,ECount
+*dim,QXValues,ARRAY,ECount
+*dim,QYValues,ARRAY,ECount
+*do,EIndex,1,ECount,1
+   *get,nthElement,ELEM,0,NUM,MIN
+   *get,MXVal,ETAB,MXIndex,ELEM,nthElement
+   *get,MYVal,ETAB,MYIndex,ELEM,nthElement
+   *get,FXVal,ETAB,FXIndex,ELEM,nthElement
+   *get,FYVal,ETAB,FYIndex,ELEM,nthElement
+   *get,QXVal,ETAB,QXIndex,ELEM,nthElement
+   *get,QYVal,ETAB,QYIndex,ELEM,nthElement
+   MXValues(EIndex)=MXVal
+   MYValues(EIndex)=MYVal
+   FXValues(EIndex)=FXVal
+   FYValues(EIndex)=FYVal
+   QXValues(EIndex)=QXVal
+   QYValues(EIndex)=QYVal
+   ESEL,U,ELEM,,nthElement
+*enddo
+
+*vscfun,FloorMXMax,MAX,MXValues
+*vscfun,FloorMXMin,MIN,MXValues
+*vscfun,FloorMYMax,MAX,MYValues
+*vscfun,FloorMYMin,MIN,MYValues
+
+*vscfun,FloorFXMax,MAX,FXValues
+*vscfun,FloorFXMin,MIN,FXValues
+*vscfun,FloorFYMax,MAX,FYValues
+*vscfun,FloorFYMin,MIN,FYValues
+
+*vscfun,FloorQXMax,MAX,QXValues
+*vscfun,FloorQXMin,MIN,QXValues
+*vscfun,FloorQYMax,MAX,QYValues
+*vscfun,FloorQYMin,MIN,QYValues
+
+!! Enrijecedor
+ALLSEL
+!ASEL,U,LOC,X,x4/2
+!ASEL,R,LOC,Y,0
+CMSEL,S,StiffenerAreas
+ESLA,S
+
+*get,ECount,ELEM,0,COUNT
+
+*del,MXValues
+*del,MYValues
+*del,FXValues
+*del,FYValues
+*del,QXValues
+*del,QYValues
+*dim,MXValues,ARRAY,ECount
+*dim,MYValues,ARRAY,ECount
+*dim,FXValues,ARRAY,ECount
+*dim,FYValues,ARRAY,ECount
+*dim,QXValues,ARRAY,ECount
+*dim,QYValues,ARRAY,ECount
+*do,EIndex,1,ECount,1
+   *get,nthElement,ELEM,0,NUM,MIN
+   *get,MXVal,ETAB,MXIndex,ELEM,nthElement
+   *get,MYVal,ETAB,MYIndex,ELEM,nthElement
+   *get,FXVal,ETAB,FXIndex,ELEM,nthElement
+   *get,FYVal,ETAB,FYIndex,ELEM,nthElement
+   *get,QXVal,ETAB,QXIndex,ELEM,nthElement
+   *get,QYVal,ETAB,QYIndex,ELEM,nthElement
+   MXValues(EIndex)=MXVal
+   MYValues(EIndex)=MYVal
+   FXValues(EIndex)=FXVal
+   FYValues(EIndex)=FYVal
+   QXValues(EIndex)=QXVal
+   QYValues(EIndex)=QYVal
+   ESEL,U,ELEM,,nthElement
+*enddo
+
+*vscfun,StiffMXMax,MAX,MXValues
+*vscfun,StiffMXMin,MIN,MXValues
+*vscfun,StiffMYMax,MAX,MYValues
+*vscfun,StiffMYMin,MIN,MYValues
+
+*vscfun,StiffFXMax,MAX,FXValues
+*vscfun,StiffFXMin,MIN,FXValues
+*vscfun,StiffFYMax,MAX,FYValues
+*vscfun,StiffFYMin,MIN,FYValues
+
+*vscfun,StiffQXMax,MAX,QXValues
+*vscfun,StiffQXMin,MIN,QXValues
+*vscfun,StiffQYMax,MAX,QYValues
+*vscfun,StiffQYMin,MIN,QYValues
+
+!! Paredes
+ALLSEL
+!ASEL,U,LOC,Y,0
+!ASEL,U,LOC,Y,-FootingDepth
+!CMSEL,S,RetainingWallAreas
+CMSEL,S,LeftRetainingWallAreas
+ESLA,S
+NSLE,S
+!NSEL,R,LOC,Z,IgnoredLowerBound*InletLength,IgnoredUpperBound*InletLength
+ESLN,R,1
+
+*get,ECount,ELEM,0,COUNT
+
+*del,MXValues
+*del,MYValues
+*del,FXValues
+*del,FYValues
+*del,QXValues
+*del,QYValues
+*dim,MXValues,ARRAY,ECount
+*dim,MYValues,ARRAY,ECount
+*dim,FXValues,ARRAY,ECount
+*dim,FYValues,ARRAY,ECount
+*dim,QXValues,ARRAY,ECount
+*dim,QYValues,ARRAY,ECount
+*do,EIndex,1,ECount,1
+   *get,nthElement,ELEM,0,NUM,MIN
+   *get,MXVal,ETAB,MXIndex,ELEM,nthElement
+   *get,MYVal,ETAB,MYIndex,ELEM,nthElement
+   *get,FXVal,ETAB,FXIndex,ELEM,nthElement
+   *get,FYVal,ETAB,FYIndex,ELEM,nthElement
+   *get,QXVal,ETAB,QXIndex,ELEM,nthElement
+   *get,QYVal,ETAB,QYIndex,ELEM,nthElement
+   MXValues(EIndex)=MXVal
+   MYValues(EIndex)=MYVal
+   FXValues(EIndex)=FXVal
+   FYValues(EIndex)=FYVal
+   QXValues(EIndex)=QXVal
+   QYValues(EIndex)=QYVal
+   ESEL,U,ELEM,,nthElement
+*enddo
+
+*vscfun,WallMXMax,MAX,MXValues
+*vscfun,WallMXMin,MIN,MXValues
+*vscfun,WallMYMax,MAX,MYValues
+*vscfun,WallMYMin,MIN,MYValues
+
+*vscfun,WallFXMax,MAX,FXValues
+*vscfun,WallFXMin,MIN,FXValues
+*vscfun,WallFYMax,MAX,FYValues
+*vscfun,WallFYMin,MIN,FYValues
+
+*vscfun,WallQXMax,MAX,QXValues
+*vscfun,WallQXMin,MIN,QXValues
+*vscfun,WallQYMax,MAX,QYValues
+*vscfun,WallQYMin,MIN,QYValues
+
+!! Sapatas
+!ASEL,S,LOC,Y,-FootingDepth
+CMSEL,S,FootingAreas
+ESLA,S
+NSLE,S
+!NSEL,R,LOC,Z,IgnoredLowerBound*InletLength,IgnoredUpperBound*InletLength
+ESLN,R,1
+
+*get,ECount,ELEM,0,COUNT
+
+*del,MXValues
+*del,MYValues
+*del,FXValues
+*del,FYValues
+*del,QXValues
+*del,QYValues
+*dim,MXValues,ARRAY,ECount
+*dim,MYValues,ARRAY,ECount
+*dim,FXValues,ARRAY,ECount
+*dim,FYValues,ARRAY,ECount
+*dim,QXValues,ARRAY,ECount
+*dim,QYValues,ARRAY,ECount
+*do,EIndex,1,ECount,1
+   *get,nthElement,ELEM,0,NUM,MIN
+   *get,MXVal,ETAB,MXIndex,ELEM,nthElement
+   *get,MYVal,ETAB,MYIndex,ELEM,nthElement
+   *get,FXVal,ETAB,FXIndex,ELEM,nthElement
+   *get,FYVal,ETAB,FYIndex,ELEM,nthElement
+   *get,QXVal,ETAB,QXIndex,ELEM,nthElement
+   *get,QYVal,ETAB,QYIndex,ELEM,nthElement
+   MXValues(EIndex)=MXVal
+   MYValues(EIndex)=MYVal
+   FXValues(EIndex)=FXVal
+   FYValues(EIndex)=FYVal
+   QXValues(EIndex)=QXVal
+   QYValues(EIndex)=QYVal
+   ESEL,U,ELEM,,nthElement
+*enddo
+
+*vscfun,FootingMXMax,MAX,MXValues
+*vscfun,FootingMXMin,MIN,MXValues
+*vscfun,FootingMYMax,MAX,MYValues
+*vscfun,FootingMYMin,MIN,MYValues
+
+*vscfun,FootingFXMax,MAX,FXValues
+*vscfun,FootingFXMin,MIN,FXValues
+*vscfun,FootingFYMax,MAX,FYValues
+*vscfun,FootingFYMin,MIN,FYValues
+
+*vscfun,FootingQXMax,MAX,QXValues
+*vscfun,FootingQXMin,MIN,QXValues
+*vscfun,FootingQYMax,MAX,QYValues
+*vscfun,FootingQYMin,MIN,QYValues
+
+ALLSEL
+
+!! Solo
+ASEL,S,LOC,Y,0
+ASEL,A,LOC,Y,-FootingDepth
+ESLA,S
+*get,ECount,ELEM,0,COUNT
+
+*del,EAreas
+*dim,EAreas,ARRAY,ECount
+
+*do,EIndex,1,ECount,1
+   *get,nthElement,ELEM,0,NUM,MIN
+   *get,nthArea,ELEM,nthElement,AREA
+   EAreas(EIndex)=nthArea
+   ESEL,U,ELEM,,nthElement
+*enddo
+
+*vscfun,TotalArea,SUM,EAreas
+AvgArea=TotalArea/ECount
+
+ASEL,S,LOC,Y,0
+ASEL,A,LOC,Y,-FootingDepth
+NSLA,S,1
+ESLN,S,0
+ESEL,R,MAT,,2
+NSLE,S
+NSEL,U,LOC,Y,0
+ASEL,S,LOC,Y,-FootingDepth
+NSLA,U,1
+NSEL,R,LOC,Z,0,InletLength
+*get,NodeCount,NODE,0,COUNT
+
+*del,YReactions
+*dim,YReactions,ARRAY,NodeCount
+
+*do,NodeIndex,1,NodeCount,1
+
+   *get,nthNode,NODE,0,NUM,MIN
+
+   *get,RY,NODE,nthNode,RF,FY
+   YReactions(NodeIndex)=RY/AvgArea
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+*vscfun,FloorPeakSoilStress,MAX,YReactions
+*vscfun,SumRY,SUM,YReactions
+FloorAvgSoilStress=SumRY/NodeCount
+
+ASEL,S,LOC,Y,0
+NSLA,S,1
+NSEL,R,LOC,Y,0
+CM,SlabNodes,NODE
+ASEL,S,LOC,Y,-FootingDepth
+NSLA,S,1
+CMSEL,A,SlabNodes
+
+*del,YDisplacements
+*dim,YDisplacements,ARRAY,NodeCount
+
+*do,NodeIndex,1,NodeCount,1
+   *get,nthNode,NODE,0,NUM,MIN
+   *get,UY,NODE,nthNode,U,Y
+   YDisplacements(NodeIndex)=UY
+   NSEL,U,NODE,,nthNode
+*enddo
+
+*vscfun,FloorMaxUY,MAX,YDisplacements
+*vscfun,FloorMinUY,MAX,YDisplacements
+
+
+ABC_V1_WRRES
+
+
+
+
+
+/post1
+
+SET,LAST
+ETABLE,REFL
+
+ALLSEL
+/VIEW,1,0,0,1
+/auto
+LPLOT
+ESEL,R,TYPE,,1
+NSLE,S
+/dist,1,1.1,1
+APLOT
+
+! Flexão na parede
+/VIEW,1,1,1,1
+/auto
+lplot
+/dist,1,1.1,1
+lplot
+
+CMSEL,S,RetainingWallAreas
+LSLA,S
+LSEL,R,LOC,Z,0
+LSEL,R,LOC,X,0
+NSLL,S,1
+*get,yMax,NODE,,MXLOC,Y
+*get,yMin,NODE,,MNLOC,Y
+NBot=NODE(0,yMin,0)
+NTop=NODE(0,yMax,0)
+PATH,'LFTWALL',2,50,50
+PPATH,1,NBot
+PPATH,2,NTop
+PDEF,'MX',ETAB,MX
+
+LSEL,S,LINE,,ALL
+NSLL,S,1
+GO2PNG,1000
+LPLOT
+/noerase
+PLPAGM,'MX',10,NODE
+ENDPNG,'PAREDE_MX'
+/erase
+
+
+! Flexão na sapata
+/VIEW,1,1,1,1
+/auto
+lplot
+/dist,1,1.1,1
+CMSEL,S,FootingAreas
+LSLA,S
+CSYS,21
+LSEL,R,LOC,Z,0
+NSLL,S,1
+*get,xMin,NODE,,MNLOC,X
+*get,xMax,NODE,,MXLOC,X
+N1=NODE(xMin,0,0)
+N2=NODE(xMax,0,0)
+CSYS,0
+
+PATH,'LFTFOOT',2,50,50
+PATH,'LFTFOOT'
+PPATH,1,N1
+PPATH,2,N2
+PDEF,'MX',ETAB,MX
+
+LSEL,S,LINE,,ALL
+NSLL,S,1
+GO2PNG,1000
+LPLOT
+/noerase
+PLPAGM,'MX',10,NODE
+ENDPNG,'SAPATA_MX'
+/erase
+
+
+! Flexão na laje
+/view,1,0,1,0
+/auto
+CMSEL,S,SlabArea
+CMSEL,A,StiffenerAreas
+ESLA,S
+NSLE,S
+PLETAB,MX
+TAKEPIC,'LAJE_MX',1000
+PLETAB,MY
+TAKEPIC,'LAJE_MY',1000
+
+
+
+
+/VIEW,1,0,0,1
+/auto
+LPLOT
+/dist,1,1.1,1
+
+
+
+! Viga de topo
+CMSEL,S,TopBeamArea
+ESLA,S
+NSLE,S,1
+*get,xmin,NODE,,MNLOC,X
+*get,xmax,NODE,,MXLOC,X
+*get,ymin,NODE,,MNLOC,Y
+*get,ymax,NODE,,MXLOC,Y
+TL=NODE(xmin,ymax,0)
+TR=NODE(xmax,ymax,0)
+BL=NODE(xmin,ymin,0)
+BR=NODE(xmax,ymin,0)
+W=BeamWidth*(ExceedingHeight**2)/6
+Ar=BeamWidth*ExceedingHeight
+PTHS2MN,TL,TR,BL,BR,'MN_TOP','X',200,W,Ar,0
+PATH,'MN_TOP_T'
+PLPAGM,'M',10,NODE
+TAKEPIC,'TOP_BEAM_M',1000
+PLPAGM,'N',10,NODE
+TAKEPIC,'TOP_BEAM_N',1000
+PTHS2V,TL,TR,BL,BR,'V_TOP','XY',10,,Ar,0
+PATH,'V_TOP'
+PLPAGM,'V',10,NODE
+TAKEPIC,'TOP_BEAM_V',1000
+
+! Viga de pé
+CMSEL,S,BackBeamArea
+ESLA,S
+NSLE,S,1
+*get,xmin,NODE,,MNLOC,X
+*get,xmax,NODE,,MXLOC,X
+*get,ymin,NODE,,MNLOC,Y
+*get,ymax,NODE,,MXLOC,Y
+TL=NODE(xmin,ymax,0)
+TR=NODE(xmax,ymax,0)
+BL=NODE(xmin,ymin,0)
+BR=NODE(xmax,ymin,0)
+W=BeamWidth*(ExceedingHeight**2)/6
+Ar=BeamWidth*ExceedingHeight
+PTHS2MN,TL,TR,BL,BR,'MN_BOT','X',200,W,Ar,0
+PATH,'MN_BOT_T'
+PLPAGM,'M',10,NODE
+TAKEPIC,'BOT_BEAM_M',1000
+PLPAGM,'N',10,NODE
+TAKEPIC,'BOT_BEAM_N',1000
+PTHS2V,TL,TR,BL,BR,'V_BOT','XY',10,,Ar,0
+PATH,'V_BOT'
+PLPAGM,'V',10,NODE
+TAKEPIC,'BOT_BEAM_V',1000
+
+! Viga frontal
+CMSEL,S,BotBeamArea
+ESLA,S
+NSLE,S,1
+*get,xmin,NODE,,MNLOC,X
+*get,xmax,NODE,,MXLOC,X
+*get,ymin,NODE,,MNLOC,Y
+*get,ymax,NODE,,MXLOC,Y
+TL=NODE(xmin,ymax,0)
+TR=NODE(xmax,ymax,0)
+BL=NODE(xmin,ymin,0)
+BR=NODE(xmax,ymin,0)
+W=BeamWidth*(ExceedingHeight**2)/6
+Ar=BeamWidth*ExceedingHeight
+PTHS2MN,TL,TR,BL,BR,'MN_FRT','X',200,W,Ar,0
+PATH,'MN_FRT_T'
+PLPAGM,'M',10,NODE
+TAKEPIC,'FRT_BEAM_M',1000
+PLPAGM,'N',10,NODE
+TAKEPIC,'FRT_BEAM_N',1000
+PTHS2V,TL,TR,BL,BR,'V_FRT','XY',10,,Ar,0
+PATH,'V_FRT'
+PLPAGM,'V',10,NODE
+TAKEPIC,'FRT_BEAM_V',1000
+
+
+
+
+

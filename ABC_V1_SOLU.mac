@@ -1,0 +1,27 @@
+/solu
+
+! Escrever memorial de cálculo
+ABC_V1_MEMO
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+SOLVING THE MODEL...
+
+ALLSEL
+
+ANTYPE,0
+NLGEOM,ON
+
+!CNVTOL,,-1
+!CNVTOL,F,,0.001,2,0.01
+!CNVTOL,M,,0.001,2,0.01
+!CNVTOL,U,,0.001,2,0.01
+
+NSUBST,SubstepCount,SubstepCount*2,SubstepCount/2
+!AUTOTS,OFF
+
+OUTRES,ERASE
+OUTRES,ALL,LAST
+
+SOLVE
+

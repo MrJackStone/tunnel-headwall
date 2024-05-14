@@ -1,0 +1,471 @@
+! Pré-processo
+/prep7
+
+! Peso próprio dos elementos
+ACEL,,Gravity
+
+ALLSEL
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+APPLYING GRAVITATIONAL LOADS ON LEFT FOOTING...
+
+! Carga vertical sobre as sapatas
+! Muro esquerdo
+ASEL,S,LOC,Y,-FootingDepth
+NSLA,S,1
+NSEL,R,LOC,X,x13,x4/2
+
+*get,NodeCount,NODE,0,COUNT
+
+! Tensão vertical devido à camada de cobrimento
+*do,NodeIndex,1,NodeCount,1
+
+   *if,WaterY,GE,0,THEN
+      MinimumSoilPressure=FootingDepth*GammaSAT
+   *elseif,WaterY,GE,-FootingDepth,THEN
+      MinimumSoilPressure=(FootingDepth+WaterY)*GammaSAT+ABS(WaterY)*Gammat
+   *else
+      MinimumSoilPressure=FootingDepth*Gammat
+   *endif
+
+   CMSEL,S,InfSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   NX=NX(nthNode)
+
+    *if,InletAngleRAD,EQ,0,THEN
+        WallTop=WallTopSlope*(NX-x5)
+    *else
+        WallTop=WallTopSlope*((NX-x5)/SIN(InletAngleRAD))
+    *endif
+   *if,WaterY,GT,WallTop,THEN
+      SoilPressure=GammaSAT*(WallTop+FootingDepth)
+   *elseif,WaterY,GT,-FootingDepth,THEN
+      SoilPressure=Gammat*(WallTop-WaterY)+GammaSAT*(WaterY+FootingDepth)
+   *else
+      SoilPressure=Gammat*(WallTop+FootingDepth)
+   *endif
+
+   *if,SoilPressure,LT,MinimumSoilPressure,THEN
+      SoilPressure=MinimumSoilPressure
+   *endif
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   NodalSoilLoad=SoilPressure*EffectiveArea
+   F,nthNode,FY,-NodalSoilLoad
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+ALLSEL
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+APPLYING GRAVITATIONAL LOADS ON RIGHT FOOTING...
+
+! Muro direito
+ASEL,S,LOC,Y,-FootingDepth
+NSLA,S,1
+NSEL,R,LOC,X,x4/2,x16
+
+*get,NodeCount,NODE,0,COUNT
+
+! Tensão vertical devido à camada de cobrimento
+*do,NodeIndex,1,NodeCount,1
+
+    CMSEL,S,InfSupportElements
+
+    *get,nthNode,NODE,0,NUM,MIN
+    NX=NX(nthNode)
+
+    *if,InletAngleRAD,EQ,0,THEN
+        WallTop=WallTopSlope*(x8-NX)
+    *else
+        WallTop=WallTopSlope*((x8-NX)/SIN(InletAngleRAD))
+    *endif
+    *if,WaterY,GT,WallTop,THEN
+      SoilPressure=GammaSAT*(WallTop+FootingDepth)
+   *elseif,WaterY,GT,-FootingDepth,THEN
+      SoilPressure=Gammat*(WallTop-WaterY)+GammaSAT*(WaterY+FootingDepth)
+   *else
+      SoilPressure=Gammat*(WallTop+FootingDepth)
+   *endif
+
+   *if,SoilPressure,LT,0,THEN
+      SoilPressure=0
+   *endif
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   NodalSoilLoad=SoilPressure*EffectiveArea
+   F,nthNode,FY,-NodalSoilLoad
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+!!
+ALLSEL
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+APPLYING VERTICAL BOUSSINESQ LOADS ON FOOTING...
+
+! Acréscimo de tensão vertical sobre as sapatas
+ASEL,S,LOC,Y,-FootingDepth
+NSLA,S,1
+*get,NodeCount,NODE,0,COUNT
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,InfSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+
+   NX=NX(nthNode)
+   NY=NY(nthNode)
+   NZ=NZ(nthNode)
+
+   *del,LILoop
+   *dim,LILoop,ARRAY,LoadCount
+
+   *do,LoadIndex,1,LoadCount,1
+
+       LoadValue=LoadVector(LoadIndex)
+       LoadPosition=PositionVector(LoadIndex)
+
+       QX=xOffset+LoadPosition*COS(LineAngle)
+       QY=GalleryHeight+GalleryDepth
+       QZ=zOffset+LoadPosition*SIN(LineAngle)
+
+       RadialDistance=SQRT(((NX-QX)**2)+((NZ-QZ)**2))
+       RelativeDepth=QY-NY
+
+       BoussinesqLoad=3*LoadValue/(2*pi*(RelativeDepth**2)*((1+(RadialDistance/RelativeDepth)**2)**(5/2)))
+       NodalLoad=BoussinesqLoad*EffectiveArea
+
+       LILoop(LoadIndex)=NodalLoad
+
+    *enddo
+
+    *vscfun,LITotal,SUM,LILoop
+    *get,ExistentLoad,NODE,nthNode,F,FY
+    NewLoad=ExistentLoad+LITotal
+    F,nthNode,FY,NewLoad
+
+    NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+!!
+ALLSEL
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+APPLYING HORIZONTAL LOADS ON LEFT WALL...
+
+! Carga horizontal sobre o muro esquerdo
+CMSEL,S,LeftRetainingWallAreas
+NSLA,S,1
+NSEL,U,LOC,Y,-FootingDepth
+
+ESLN,S,1
+CM,LeftWallElements,ELEM
+
+*get,NodeCount,NODE,0,COUNT
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,LeftWallElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+
+   NX=NX(nthNode)
+   NY=NY(nthNode)
+   NZ=NZ(nthNode)
+
+   Depth=(GalleryDepth-MinimumDepth)+(GalleryHeight-NY)
+
+   ! Tensão horizontal devido à camada de solo
+   *if,WaterY,GT,NY,THEN
+       EffectivePressure=Gammat*(WaterDepth-MinimumDepth)+(WaterY-NY)*GammaSUB
+    *else
+       EffectivePressure=Gammat*Depth
+    *endif
+    HorEffectivePressure=EffectivePressure*ActiveEPCoefficient-2*SoilCohesion*SQRT(ActiveEPCoefficient)
+
+   ! Tensão horizontal devido à água
+   *if,WaterY,GT,NY,THEN
+       WaterPressure=(WaterY-NY)*Gammaw
+    *else
+        WaterPressure=0
+    *endif
+
+   *del,StressIncreases
+   *dim,StressIncreases,ARRAY,LoadCount
+
+   ! Acréscimo de tensão horizontal devido ao trem-tipo (Boussinesq)
+   *do,LoadIndex,1,LoadCount,1
+
+       LoadValue=LoadVector(LoadIndex)
+       LoadPosition=PositionVector(LoadIndex)
+
+       QX=xOffset+LoadPosition*COS(LineAngle)
+       QY=GalleryHeight+GalleryDepth
+       QZ=zOffset+LoadPosition*SIN(LineAngle)
+
+       DeltaZ=QZ-NZ
+       DeltaX=QX-NX
+
+       R1AngularCoefficient=-TAN(InletAngleRAD)
+       R2AngularCoefficient=TAN((pi/2)-InletAngleRAD)
+       R2LinearCoefficient=DeltaZ-DeltaX*TAN((pi/2)-InletAngleRAD)
+
+       xIntersection=R2LinearCoefficient/(R1AngularCoefficient-R2AngularCoefficient)
+       !yIntersection=xIntersection*(-TAN(InletAngleRAD))
+
+       xBoussinesq=xIntersection/COS(InletAngleRAD)
+       !yBoussinesq=(DeltaZ-yIntersection)/COS(InletAngleRAD)
+
+       *if,xBoussinesq,LE,0,THEN
+
+           PerpDistance=xBoussinesq
+           FullDistance=SQRT(((NX-QX)**2)+((NZ-QZ)**2)+((NY-QY)**2))
+           RelativeDepth=QY-NY
+
+           ! Fórmula do acréscimo de tensão horizontal devido a força concentrada
+           !   Valor muliplicado por 1.5 (um e meio) para compensar pela hipótese de semi-espaço infinito
+           !   na situação de empuxo ativo.
+           HorBoussinesqLoad=1.5*(3*LoadValue*(PerpDistance**2)*RelativeDepth/(2*pi*(FullDistance**5)))
+
+        *else
+
+            HorBoussinesqLoad=0
+
+        *endif
+
+        StressIncreases(LoadIndex)=HorBoussinesqLoad
+
+    *enddo
+
+    *vscfun,StressIncrease,SUM,StressIncreases
+
+    CM,PreviousNodes,NODE
+    NSEL,S,NODE,,nthNode
+    ESLN,R,0
+    *get,ElementCount,ELEM,0,COUNT
+    CMSEL,S,PreviousNodes
+
+    *del,ElemAreas
+    *dim,ElemAreas,ARRAY,ElementCount
+
+    *do,ElementIndex,1,ElementCount,1
+       *get,nthElement,ELEM,0,NUM,MIN
+       *get,ElemArea,ELEM,nthElement,AREA
+       ElemAreas(ElementIndex)=ElemArea
+       ESEL,U,ELEM,,nthElement
+    *enddo
+    *vscfun,TotalArea,SUM,ElemAreas
+
+    EffectiveArea=TotalArea/4
+
+    HorizontalStress=HorEffectivePressure+WaterPressure-StressIncrease
+    HorLoad=HorizontalStress*EffectiveArea
+
+    HorLoadX=HorLoad*COS(InletAngleRAD)
+    HorLoadZ=HorLoad*SIN(InletAngleRAD)
+
+    F,nthNode,FX,HorLoadX
+    F,nthNode,FZ,HorLoadZ
+
+    NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+!!
+ALLSEL
+
+*msg,UI,GalleryIndex
+GALLERY # %4I %/&
+APPLYING HORIZONTAL LOADS ON RIGHT WALL...
+
+! Carga horizontal sobre o muro direito
+CMSEL,S,RightRetainingWallAreas
+NSLA,S,1
+NSEL,U,LOC,Y,-FootingDepth
+
+ESLN,S,1
+CM,RightWallElements,ELEM
+
+*get,NodeCount,NODE,0,COUNT
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,RightWallElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+
+   NX=NX(nthNode)
+   NY=NY(nthNode)
+   NZ=NZ(nthNode)
+
+   Depth=(GalleryDepth-MinimumDepth)+(GalleryHeight-NY)
+
+   ! Tensão horizontal devido à camada de solo
+   *if,WaterY,GT,NY,THEN
+       EffectivePressure=Gammat*(WaterDepth-MinimumDepth)+(WaterY-NY)*GammaSUB
+    *else
+       EffectivePressure=Gammat*Depth
+    *endif
+    HorEffectivePressure=EffectivePressure*ActiveEPCoefficient-2*SoilCohesion*SQRT(ActiveEPCoefficient)
+
+   ! Tensão horizontal devido à água
+   *if,WaterY,GT,NY,THEN
+       WaterPressure=(WaterY-NY)*Gammaw
+    *else
+        WaterPressure=0
+    *endif
+
+   *del,StressIncreases
+   *dim,StressIncreases,ARRAY,LoadCount
+
+   ! Acréscimo de tensão horizontal devido ao trem-tipo (Boussinesq)
+
+   *do,LoadIndex,1,LoadCount,1
+
+       LoadValue=LoadVector(LoadIndex)
+       LoadPosition=PositionVector(LoadIndex)
+
+       QX=xOffset+LoadPosition*COS(LineAngle)
+       QY=GalleryHeight+GalleryDepth
+       QZ=zOffset+LoadPosition*SIN(LineAngle)
+
+       DeltaZ=QZ-NZ
+       DeltaX=QX-NX
+
+       R1AngularCoefficient=-TAN(InletAngleRAD)
+       R2AngularCoefficient=TAN((pi/2)-InletAngleRAD)
+       R2LinearCoefficient=DeltaZ-DeltaX*TAN((pi/2)-InletAngleRAD)
+
+       xIntersection=R2LinearCoefficient/(R1AngularCoefficient-R2AngularCoefficient)
+       !yIntersection=xIntersection*(-TAN(InletAngleRAD))
+
+       xBoussinesq=xIntersection/COS(InletAngleRAD)
+       !yBoussinesq=(DeltaZ-yIntersection)/COS(InletAngleRAD)
+
+       *if,xBoussinesq,GE,0,THEN
+
+           PerpDistance=xBoussinesq
+           FullDistance=SQRT(((NX-QX)**2)+((NZ-QZ)**2)+((NY-QY)**2))
+           RelativeDepth=QY-NY
+
+           ! Fórmula do acréscimo de tensão horizontal devido a força concentrada
+           !   Valor muliplicado por 1.5 (um e meio) para compensar pela hipótese de semi-espaço infinito
+           !   na situação de empuxo ativo.
+           HorBoussinesqLoad=1.5*(3*LoadValue*(PerpDistance**2)*RelativeDepth/(2*pi*(FullDistance**5)))
+
+        *else
+
+            HorBoussinesqLoad=0
+
+        *endif
+
+        StressIncreases(LoadIndex)=HorBoussinesqLoad
+
+    *enddo
+
+    *vscfun,StressIncrease,SUM,StressIncreases
+
+    CM,PreviousNodes,NODE
+    NSEL,S,NODE,,nthNode
+    ESLN,R,0
+    *get,ElementCount,ELEM,0,COUNT
+    CMSEL,S,PreviousNodes
+
+    *del,ElemAreas
+    *dim,ElemAreas,ARRAY,ElementCount
+
+    *do,ElementIndex,1,ElementCount,1
+       *get,nthElement,ELEM,0,NUM,MIN
+       *get,ElemArea,ELEM,nthElement,AREA
+       ElemAreas(ElementIndex)=ElemArea
+       ESEL,U,ELEM,,nthElement
+    *enddo
+    *vscfun,TotalArea,SUM,ElemAreas
+
+    EffectiveArea=TotalArea/4
+
+    HorizontalStress=HorEffectivePressure+WaterPressure-StressIncrease
+    HorLoad=HorizontalStress*EffectiveArea
+
+    HorLoadX=HorLoad*COS(InletAngleRAD)
+    HorLoadZ=HorLoad*SIN(InletAngleRAD)
+
+    F,nthNode,FX,-HorLoadX
+    F,nthNode,FZ,HorLoadZ
+
+    NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+! Reativar exibição automática
+/gopr
+IMMED,1
+/uis,REPLOT,1
+

@@ -1,0 +1,60 @@
+*cfopen,SingleRES,'SRES',
+   *vwrite,
+   ('ELEMENTO ; LAJE DE PISO      ; ENRIJECEDOR       ; MURO (PAREDES)    ; SAPATA CORRIDA    ;')
+   ! MX
+   *vwrite,FloorMXMAX/1000,StiffMXMAX/1000,WallMXMAX/1000,FootingMXMAX/1000
+   ('MX(Z) MAX; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorMXMIN/1000,StiffMXMIN/1000,WallMXMIN/1000,FootingMXMIN/1000
+   ('MX(Z) MIN; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   ! MY
+   *vwrite,FloorMYMAX/1000,StiffMYMAX/1000,WallMYMAX/1000,FootingMYMAX/1000
+   ('MY MAX   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorMYMIN/1000,StiffMYMIN/1000,WallMYMIN/1000,FootingMYMIN/1000
+   ('MY MIN   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   ! FX
+   *vwrite,FloorFXMAX/1000,StiffFXMAX/1000,WallFXMAX/1000,FootingFXMAX/1000
+   ('FX MAX   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorFXMIN/1000,StiffFXMIN/1000,WallFXMIN/1000,FootingFXMIN/1000
+   ('FX MIN   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   ! FY
+   *vwrite,FloorFYMAX/1000,StiffFYMAX/1000,WallFYMAX/1000,FootingFYMAX/1000
+   ('FY MAX   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorFYMIN/1000,StiffFYMIN/1000,WallFYMIN/1000,FootingFYMIN/1000
+   ('FY MIN   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   ! QX
+   *vwrite,FloorQXMAX/1000,StiffQXMAX/1000,WallQXMAX/1000,FootingQXMAX/1000
+   ('QX MAX   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorQXMIN/1000,StiffQXMIN/1000,WallQXMIN/1000,FootingQXMIN/1000
+   ('QX MIN   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   ! QY
+   *vwrite,FloorQYMAX/1000,StiffQYMAX/1000,WallQYMAX/1000,FootingQYMAX/1000
+   ('QY MAX   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+   *vwrite,FloorQYMIN/1000,StiffQYMIN/1000,WallQYMIN/1000,FootingQYMIN/1000
+   ('QY MIN   ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ; ',F17.2,' ;')
+*cfclos
+
+*cfopen,FloorRES,'TXT',,APPEND
+   *vwrite,GalleryDepth,x1Offset,LineDirection,SlabThk,FloorMXMAX,FloorMXMIN,FloorMYMAX,FloorMYMIN,FloorFXMAX,FloorFXMIN,FloorFYMAX,FloorFYMIN,FloorQXMAX,FloorQXMIN,FloorQYMAX,FloorQYMIN
+   (F8.4,'; ',F8.4,'; ',F8.4,'; ',F8.4,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2)
+*cfclos
+
+*cfopen,StiffRES,'TXT',,APPEND
+   *vwrite,GalleryDepth,x1Offset,LineDirection,StiffenerThk,StiffMXMAX,StiffMXMIN,StiffMYMAX,StiffMYMIN,StiffFXMAX,StiffFXMIN,StiffFYMAX,StiffFYMIN,StiffQXMAX,StiffQXMIN,StiffQYMAX,StiffQYMIN
+   (F8.4,'; ',F8.4,'; ',F8.4,'; ',F8.4,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2)
+*cfclos
+
+*cfopen,WallRES,'TXT',,APPEND
+   *vwrite,GalleryDepth,x1Offset,LineDirection,RetainingWallThk,WallMXMAX,WallMXMIN,WallMYMAX,WallMYMIN,WallFXMAX,WallFXMIN,WallFYMAX,WallFYMIN,WallQXMAX,WallQXMIN,WallQYMAX,WallQYMIN
+   (F8.4,'; ',F8.4,'; ',F8.4,'; ',F8.4,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2)
+*cfclos
+
+*cfopen,FootRES,'TXT',,APPEND
+   *vwrite,GalleryDepth,x1Offset,LineDirection,FootingHeight,FootingMXMAX,FootingMXMIN,FootingMYMAX,FootingMYMIN,FootingFXMAX,FootingFXMIN,FootingFYMAX,FootingFYMIN,FootingQXMAX,FootingQXMIN,FootingQYMAX,FootingQYMIN
+   (F8.4,'; ',F8.4,'; ',F8.4,'; ',F8.4,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2,'; ',F12.2)
+*cfclos
+
+*cfopen,SoilRES,'TXT',,APPEND
+   *vwrite,GalleryDepth,x1Offset,LineDirection,FloorPeakSoilStress,FloorAvgSoilStress,FloorMaxUY,FloorMinUY
+   (F8.4,'; ',F8.4,'; ',F8.4,'; ',E12.4,'; ',E12.4,'; ',E12.4,'; ',E12.4)
+*cfclos
+

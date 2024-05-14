@@ -1,0 +1,45 @@
+! Versão do código
+Version=1
+
+! Registrar o tempo de início da solução
+*get,TBegin,ACTIVE,0,TIME,WALL
+
+! Cálculos preliminares
+ABC_V1_PREP
+
+! Solid model
+ABC_V1_SM
+
+! Finite element model
+ABC_V1_FEM
+
+! Apoios
+ABC_V1_BC
+
+! Carregamento
+ABC_V1_LOAD
+
+! Solucionar o modelo
+ABC_V1_SOLU
+
+! Pós-processo
+ABC_V1_POST
+
+
+! Finalizar execução
+*get,TEnd,ACTIVE,0,TIME,WALL
+DeltaT=(TEnd-TBegin)*60
+ALLSEL
+/pnum,TYPE,1
+/number,1
+/eshape,1
+EPLOT
+
+*msg,UI,GalleryIndex,DeltaT
+GALLERY # %4I %/&
+FINISHED ANALYSIS! %/&
+Elapsed time: %15.2G minutes.
+
+FINISH
+
+

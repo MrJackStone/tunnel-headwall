@@ -1,0 +1,369 @@
+! Apoios
+ALLSEL
+ASUM,DEFAULT
+
+TYPE,2
+CSYS,CoordSys
+MAT,2
+
+! Apoio inferior
+NSEL,S,LOC,Y,0
+CMSEL,S,RetainingWallAreas
+LSLA,S
+NSLL,U,1
+NSEL,U,LOC,Z,InletLength
+CMSEL,S,FootingAreas
+NSLA,A,1
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,InfSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,InfSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal,yVal-EffSpringLength,zVal
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+! Apoio lateral (esquerda)
+CMSEL,S,LeftRetainingWallAreas
+NSLA,S,1
+NSEL,U,LOC,Y,-FootingDepth
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,LeftSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,LeftSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal-EffSpringLength*COS(InletAngleRAD),yVal,zVal-EffSpringLength*SIN(InletAngleRAD)
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+! Apoio lateral (direita)
+CMSEL,S,RightRetainingWallAreas
+NSLA,S,1
+NSEL,U,LOC,Y,-FootingDepth
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,RightSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,RightSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal+EffSpringLength*COS(InletAngleRAD),yVal,zVal-EffSpringLength*SIN(InletAngleRAD)
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+! Apoio lateral inferior (esquerda)
+CMSEL,S,LeftRetainingWallAreas
+NSLA,S,1
+NSEL,R,LOC,Y,-FootingDepth,0
+NSEL,U,LOC,Y,0
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,LowerLeftSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,LowerLeftSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal+EffSpringLength*COS(InletAngleRAD),yVal,zVal+EffSpringLength*SIN(InletAngleRAD)
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+! Apoio lateral inferior (direita)
+CMSEL,S,RightRetainingWallAreas
+NSLA,S,1
+NSEL,R,LOC,Y,-FootingDepth,0
+NSEL,U,LOC,Y,0
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,LowerRightSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,LowerRightSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal-EffSpringLength*COS(InletAngleRAD),yVal,zVal+EffSpringLength*SIN(InletAngleRAD)
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+! Viga de pé frontal
+CMSEL,S,BotBeamArea
+NSLA,S,1
+*get,NodeCount,NODE,0,COUNT
+
+ESLN,S,1
+CM,BotBeamSupportElements,ELEM
+
+*do,NodeIndex,1,NodeCount,1
+
+   CMSEL,S,BotBeamSupportElements
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   CM,PreviousNodes,NODE
+   NSEL,S,NODE,,nthNode
+   ESLN,R,0
+   *get,ElementCount,ELEM,0,COUNT
+   CMSEL,S,PreviousNodes
+
+   *del,ElemAreas
+   *dim,ElemAreas,ARRAY,ElementCount
+
+   *do,ElementIndex,1,ElementCount,1
+      *get,nthElement,ELEM,0,NUM,MIN
+      *get,ElemArea,ELEM,nthElement,AREA
+      ElemAreas(ElementIndex)=ElemArea
+      ESEL,U,ELEM,,nthElement
+   *enddo
+   *vscfun,TotalArea,SUM,ElemAreas
+
+   EffectiveArea=TotalArea/4
+   EffSpringLength=SpringLength*(WElementArea/EffectiveArea)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   N,NewNode,xVal,yVal,zVal+EffSpringLength
+   E,NewNode,nthNode
+
+   D,NewNode,UX,0,,,,UY,UZ
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+! Viga de topo
+CMSEL,S,TopBeamArea
+NSLA,S,1
+*get,NodeCount,NODE,0,COUNT
+
+*do,NodeIndex,1,NodeCount,1
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   !N,NewNode,xVal,yVal,zVal-SpringLength/20
+   !E,NewNode,nthNode
+
+   !D,NewNode,UX,0,,,,UY,UZ
+   D,nthNode,UZ,0
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+! Interface parede-galeria
+CMSEL,S,RetainingWallAreas
+LSLA,S
+LSEL,R,LOC,Z,0
+NSLL,S,1
+*get,NodeCount,NODE,0,COUNT
+
+*do,NodeIndex,1,NodeCount,1
+
+   *get,nthNode,NODE,0,NUM,MIN
+   xVal=NX(nthNode)
+   yVal=NY(nthNode)
+   zVal=NZ(nthNode)
+
+   *get,MaxNode,NODE,0,NUM,MAXD
+   NewNode=MaxNode+1
+   !N,NewNode,xVal,yVal,zVal-SpringLength/20
+   !E,NewNode,nthNode
+
+   !D,NewNode,UX,0,,,,UY,UZ
+   D,nthNode,UZ,0
+
+   NSEL,U,NODE,,nthNode
+
+*enddo
+
+
+
+
+
+ALLSEL
+
+
+
+
